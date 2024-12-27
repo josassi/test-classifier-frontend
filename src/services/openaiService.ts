@@ -129,11 +129,24 @@ export async function classifyText(text: string): Promise<{ textResult: string; 
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'Failed to classify text');
+      // Try to parse as JSON first
+      let errorMessage: string;
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.error || 'Failed to classify text';
+      } catch {
+        // If parsing as JSON fails, get the text response
+        errorMessage = await response.text();
+      }
+      throw new Error(errorMessage);
     }
 
-    const data: ClassificationResponse = await response.json();
+    let data: ClassificationResponse;
+    try {
+      data = await response.json();
+    } catch (error) {
+      throw new Error('Server response was not in valid JSON format');
+    }
     
     if (data.error) {
       throw new Error(data.error);
