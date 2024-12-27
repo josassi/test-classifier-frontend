@@ -128,6 +128,9 @@ export async function classifyText(text: string): Promise<{ textResult: string; 
       })
     });
 
+    // Clone the response so we can read it multiple times if needed
+    const responseClone = response.clone();
+
     if (!response.ok) {
       // Try to parse as JSON first
       let errorMessage: string;
@@ -135,8 +138,8 @@ export async function classifyText(text: string): Promise<{ textResult: string; 
         const errorData = await response.json();
         errorMessage = errorData.error || 'Failed to classify text';
       } catch {
-        // If parsing as JSON fails, get the text response
-        errorMessage = await response.text();
+        // If parsing as JSON fails, use the cloned response to get the text
+        errorMessage = await responseClone.text();
       }
       throw new Error(errorMessage);
     }
@@ -145,7 +148,9 @@ export async function classifyText(text: string): Promise<{ textResult: string; 
     try {
       data = await response.json();
     } catch (error) {
-      throw new Error('Server response was not in valid JSON format');
+      // If the main response parsing fails, try the clone as text
+      const rawText = await responseClone.text();
+      throw new Error(`Server response was not in valid JSON format. Raw response: ${rawText}`);
     }
     
     if (data.error) {
