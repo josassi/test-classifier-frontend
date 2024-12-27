@@ -40,7 +40,7 @@ export interface GraphEdge {
   id: string;
   source: string;
   target: string;
-  type: 'smoothstep';
+  type: 'default';
 }
 
 export interface GraphData {
@@ -97,7 +97,7 @@ function convertToGraphData(nodes: ClassificationNode[]): GraphData {
           id: `${node.parent_id}-${node.id}`,
           source: node.parent_id,
           target: node.id,
-          type: 'smoothstep'
+          type: 'default'
         });
       }
     });
