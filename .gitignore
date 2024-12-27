@@ -16,6 +16,7 @@ yarn.lock
 .env.development.local
 .env.test.local
 .env.production.local
+# Note: .env.production is NOT ignored as it contains template values
 
 # IDE and Editor files
 .idea/
