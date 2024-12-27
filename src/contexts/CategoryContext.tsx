@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useCallback, useEffect } fr
 import { Category } from '../types/category';
 import * as categoryService from '../services/categoryService';
 import { useHistory } from '../hooks/useHistory';
+import { useAuth } from './AuthContext';
 
 interface CategoryContextType {
   categories: Category[];
@@ -20,6 +21,7 @@ interface CategoryContextType {
 const CategoryContext = createContext<CategoryContextType | null>(null);
 
 export function CategoryProvider({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
   const {
     state: categories,
     setState: setCategories,
@@ -42,15 +44,23 @@ export function CategoryProvider({ children }: { children: React.ReactNode }) {
     } catch (err: any) {
       console.error('Error loading categories:', err);
       setError(err.message || 'Failed to load categories');
+      resetCategories([]); // Reset to empty array on error
     } finally {
       setLoading(false);
     }
   };
 
-  // Only load categories once when the provider mounts
+  // Reset categories when user changes
   useEffect(() => {
-    loadCategories();
-  }, []);
+    if (user) {
+      loadCategories();
+    } else {
+      // Clear categories when user logs out
+      resetCategories([]);
+      setLoading(false);
+      setError(null);
+    }
+  }, [user]);
 
   const addCategory = useCallback(async (category: Omit<Category, 'id' | 'children'>) => {
     try {
