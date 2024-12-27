@@ -73,7 +73,7 @@ function CategoryMapping() {
     };
   }, [isResizing, handleResize, handleResizeEnd]);
 
-  const resetForm = (parentId: string | null = null) => {
+  const resetForm = (parentId: string | null = null, expandPane: boolean = true) => {
     setNewCategory({
       name: '',
       description: '',
@@ -82,7 +82,9 @@ function CategoryMapping() {
     setIsEditing(false);
     setSelectedCategoryId(null);
     setError(null);
-    setIsPaneCollapsed(false); // Auto-expand when creating new category
+    if (expandPane) {
+      setIsPaneCollapsed(false); // Auto-expand when creating new category
+    }
   };
 
   const handleEditCategory = (id: string) => {
@@ -143,6 +145,14 @@ function CategoryMapping() {
   const handlePaneToggle = () => {
     setIsPaneCollapsed(!isPaneCollapsed);
   };
+
+  const handleNewCategory = useCallback((parentId: string | null) => {
+    resetForm(parentId, true); // Always expand pane when explicitly creating a new category
+  }, []);
+
+  const handleClearSelection = useCallback(() => {
+    resetForm(null, false); // Don't expand pane when just clearing selection
+  }, []);
 
   return (
     <div className="flex h-[calc(100vh-4rem)]">
@@ -307,11 +317,9 @@ function CategoryMapping() {
           categories={categories}
           onEditCategory={handleEditCategory}
           onRemoveCategory={deleteCategory}
-          onNewCategory={(parentId: string | null) => {
-            resetForm(parentId);
-          }}
+          onNewCategory={handleNewCategory}
           selectedCategoryId={selectedCategoryId}
-          onClearSelection={() => resetForm()}
+          onClearSelection={handleClearSelection}
         />
       </div>
     </div>

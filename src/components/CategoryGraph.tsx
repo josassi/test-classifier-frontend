@@ -317,7 +317,7 @@ function Flow({ categories, onEditCategory, onNewCategory, selectedCategoryId, o
             />
           </div>
           <button
-            onClick={() => onClearSelection?.()}
+            onClick={() => onNewCategory(null)}
             className="px-3 py-1.5 bg-white/80 backdrop-blur-sm hover:bg-blue-50 text-blue-600 rounded-lg transition-colors border border-blue-100 text-sm flex items-center gap-2 shadow-sm hover:border-blue-200"
           >
             <Plus size={16} />
