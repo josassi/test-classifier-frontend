@@ -15,6 +15,11 @@ This project is a text classification frontend application built with React, Typ
 - Authentication via Supabase
 - Text classification powered by OpenAI
 
+## Screenshot
+
+![Category Graph Visualization](/public/screenshot.png)
+*Visual representation of the category hierarchy and classification results*
+
 ## Technology Stack
 
 - **Frontend Framework**: React 18
